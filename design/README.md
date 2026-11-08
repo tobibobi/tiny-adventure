@@ -25,8 +25,9 @@ file mixes settled and open parts:
 |---|---|---|
 | [rules.md](rules.md) | Starting rule set: checks, retries, character, character types and approaches, social, combat | leaning |
 
-Planned topics, not written yet: classes and capabilities, magic, combat in
-detail, dialogue and NPC attitude, progression, resting and resources,
+Planned topics, not written yet: classes and capabilities, a character
+creator, the dungeon master as a visible virtual storyteller and judge,
+magic, combat in detail, dialogue and NPC attitude, progression, resting and resources,
 death and failure, the verb interface, the solvability checker, and finally
 the world/script format.
 
