@@ -1,32 +1,35 @@
 # Architecture
 
+> **Status:** this describes the current engine, a C++20 port of the version 1
+> text engine. Its architecture is not decided for version 2; see
+> [v2-rules.md](v2-rules.md).
+
 ## Components
 
 - **advengine** (`sources/modules/advengine`) is a static library holding the
-  whole engine. Its public API is the four functions in
-  `headers/advengine/advengine.h`: `adv_load`, `adv_start`, `adv_turn` and
-  `adv_is_over`.
+  whole engine. Its public API is the class `adv::Game` in
+  `headers/advengine/advengine.h`: `load`, `start`, `turn` and `is_over`.
 - **tinyadv** (`sources/apps/tinyadv`) is a thin terminal front end: it reads
-  lines from stdin and hands them to `adv_turn`. A different front end (a
+  lines from stdin and hands them to `Game::turn`. A different front end (a
   serial console, a network server) only needs to replace this loop.
 
 ## Engine source files
 
 | File | Responsibility |
 |---|---|
-| `world.c` | The game state, lookups and the world file loader |
-| `parser.c` | Turns a line of input into a command (`Cmd`) |
-| `game.c` | Executes a command: movement, rules, built-in verbs, scoring, darkness |
-| `output.c` | Word-wrapped output |
+| `world.cpp` | The game state, lookups and the world file loader |
+| `parser.cpp` | Turns a line of input into a command (`Cmd`) |
+| `game.cpp` | Executes a command: movement, rules, built-in verbs, scoring, darkness |
+| `output.cpp` | Word-wrapped output |
 | `internal.h` | Types and declarations shared by the files above |
 
-All state lives in one `struct adv_state` (accessed as `G`), sized by fixed
-limits so the engine never allocates during play. Memory is only allocated
-while loading the world.
+All state of one game, the loaded world plus the progress of play, lives in a
+`World` owned by the `Game`. There is no global state.
 
-The loader reads the file twice: the first pass collects room and object ids,
-so the second pass can resolve references regardless of order. Errors are
-reported with file name and line number, and `adv_load` returns -1.
+The loader reads the file into memory and makes two passes over it: the
+first collects room and object ids, so the second can resolve references
+regardless of order. Errors are reported with file name and line number by
+throwing `adv::LoadError`; a failed load leaves the game unchanged.
 
 ## One turn
 
@@ -35,7 +38,7 @@ reported with file name and line number, and `adv_load` returns -1.
    a preposition into a first and second noun phrase, ignoring filler words
    like "the". Each phrase is matched against the `WORDS` of visible objects.
 2. **Fallback.** If the verb or a noun is not understood,
-   `adv_fallback_parse()` gets a chance to rewrite the command.
+   `fallback_parse()` gets a chance to rewrite the command.
 3. **Reject.** Commands with an unknown verb or a noun that isn't visible get
    a short explanation and don't use a turn.
 4. **Movement.** `go` commands follow an exit, if its flag allows it.
@@ -47,7 +50,7 @@ reported with file name and line number, and `adv_load` returns -1.
 
 ## The parser fallback
 
-`adv_fallback_parse()` in `parser.c` is deliberately empty. It is the planned
+`fallback_parse()` in `parser.cpp` is deliberately empty. It is the planned
 hook for smarter input handling that stays small enough for modest hardware:
 
 1. **Embedding matcher**: a small sentence-embedding model (MiniLM-class,

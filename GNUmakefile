@@ -10,8 +10,8 @@ CPACK      ?= cpack
 GENERATOR  ?= $(if $(shell command -v ninja 2>/dev/null),Ninja,Unix Makefiles)
 CMAKE_ARGS ?=
 
-SOURCES := $(shell find sources -name '*.c' -o -name '*.h')
-C_FILES := $(filter %.c,$(SOURCES))
+SOURCES := $(shell find sources -name '*.cpp' -o -name '*.h')
+CPP_FILES := $(filter %.cpp,$(SOURCES))
 
 .DEFAULT_GOAL := all
 .PHONY: all configure build rebuild run test docs install package \
@@ -53,8 +53,8 @@ format: ## Reformat all sources with clang-format
 format-check: ## Fail if any source is not clang-format clean
 	clang-format --dry-run --Werror $(SOURCES)
 
-tidy: $(BUILD_DIR)/CMakeCache.txt ## Run clang-tidy on all C sources
-	clang-tidy -p $(BUILD_DIR) --quiet $(C_FILES)
+tidy: $(BUILD_DIR)/CMakeCache.txt ## Run clang-tidy on all C++ sources
+	clang-tidy -p $(BUILD_DIR) --quiet $(CPP_FILES)
 
 clean: ## Remove the build directory
 	rm -rf $(BUILD_DIR)

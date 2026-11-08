@@ -115,7 +115,5 @@ Flags need no declaration and start cleared.
 
 ## Limits
 
-To stay small, the engine uses fixed tables: 64 rooms, 64 objects, 64 flags,
-128 rules, 96 synonyms, 8 words per object and 8 conditions and 8 effects per
-rule. They are defined at the top of
-`sources/modules/advengine/src/internal.h`.
+There are no fixed limits on the number of rooms, objects, flags, rules,
+synonyms, words per object, or conditions and effects per rule.

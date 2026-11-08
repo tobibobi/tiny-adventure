@@ -2,7 +2,7 @@
 
 set(TINYADV_DATA_INSTALL_DIR ${CMAKE_INSTALL_DATADIR}/tinyadv)
 
-add_executable(tinyadv src/main.c)
+add_executable(tinyadv src/main.cpp)
 
 target_link_libraries(tinyadv PRIVATE advengine project_options)
 
@@ -35,5 +35,14 @@ if(BUILD_TESTING)
             -DWORLD=${CMAKE_CURRENT_SOURCE_DIR}/data/world.txt
             -DINPUT=${CMAKE_CURRENT_SOURCE_DIR}/test/grue.txt
             -DEXPECT=eaten\ by\ a\ grue
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/test/run_script.cmake)
+    # A broken world must be rejected with file, line and reason.
+    add_test(NAME tinyadv.load_error
+        COMMAND ${CMAKE_COMMAND}
+            -DEXE=$<TARGET_FILE:tinyadv>
+            -DWORLD=${CMAKE_CURRENT_SOURCE_DIR}/test/broken_world.txt
+            -DINPUT=${CMAKE_CURRENT_SOURCE_DIR}/test/walkthrough.txt
+            -DEXPECT=broken_world.txt:3:\ unknown\ room\ nowhere_land
+            -DEXPECT_ERROR=ON
             -P ${CMAKE_CURRENT_SOURCE_DIR}/test/run_script.cmake)
 endif()

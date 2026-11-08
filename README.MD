@@ -1,6 +1,6 @@
 # tinyadv
 
-A tiny, data-driven text adventure engine in plain C99, in the spirit of
+A tiny, data-driven text adventure engine in C++20, in the spirit of
 Colossal Cave Adventure and Zork.
 
 The engine knows nothing about any particular game. Rooms, objects, flags and
@@ -21,7 +21,7 @@ It's locked.
 
 ## Building
 
-Requirements: a C99 compiler, CMake 3.16 or newer and GNU make. Ninja is used
+Requirements: a C++20 compiler, CMake 3.16 or newer and GNU make. Ninja is used
 automatically if installed. Optional: Doxygen (docs), clang-format and
 clang-tidy (code style), dpkg (Debian packages).
 
@@ -74,5 +74,5 @@ See [docs/world-format.md](docs/world-format.md). The sample world in
 - Save and restore
 - Characters you can talk to
 - A smarter parser fallback (embedding matcher or a small local language
-  model) behind `adv_fallback_parse()`, see
+  model) behind `fallback_parse()`, see
   [docs/architecture.md](docs/architecture.md)

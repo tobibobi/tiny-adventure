@@ -4,17 +4,18 @@ Checks: >
   bugprone-*,
   cert-*,
   clang-analyzer-*,
+  cppcoreguidelines-*,
   misc-*,
+  modernize-*,
   performance-*,
   portability-*,
   readability-*,
   -bugprone-easily-swappable-parameters,
-  -cert-err33-c,
-  -cert-err34-c,
-  -cert-err52-c,
-  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,
-  -clang-analyzer-security.insecureAPI.strcpy,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -cppcoreguidelines-pro-bounds-avoid-unchecked-container-access,
+  -cppcoreguidelines-pro-bounds-constant-array-index,
   -misc-include-cleaner,
+  -modernize-use-trailing-return-type,
   -readability-braces-around-statements,
   -readability-identifier-length,
   -readability-implicit-bool-conversion,
@@ -26,4 +27,8 @@ HeaderFilterRegex: 'sources/.*'
 CheckOptions:
   - key: readability-function-cognitive-complexity.Threshold
     value: 30
+  - key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: true
+  - key: cppcoreguidelines-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic
+    value: true
 ...

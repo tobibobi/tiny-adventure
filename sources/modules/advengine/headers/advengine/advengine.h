@@ -4,47 +4,80 @@
  *
  * The engine knows nothing about any particular game. Rooms, objects, flags
  * and puzzle rules are loaded from a plain-text world file (see
- * docs/world-format.md). Output is plain ASCII on stdout, word-wrapped for an
+ * docs/world-format.md). Output is plain ASCII, word-wrapped for an
  * 80-column terminal.
  *
  * Typical use:
  * @code
- *   if (adv_load("world.txt") != 0) return 1;
- *   adv_start();
- *   while (!adv_is_over()) {
+ *   adv::Game game(std::cout);
+ *   try {
+ *       game.load("world.txt");
+ *   } catch (const adv::LoadError &e) {
+ *       std::cerr << e.what() << '\n';
+ *       return 1;
+ *   }
+ *   game.start();
+ *   while (!game.is_over()) {
  *       // print a prompt, read a line ...
- *       adv_turn(line);
+ *       game.turn(line);
  *   }
  * @endcode
  */
 #ifndef ADVENGINE_ADVENGINE_H
 #define ADVENGINE_ADVENGINE_H
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <filesystem>
+#include <iosfwd>
+#include <memory>
+#include <stdexcept>
+#include <string_view>
 
-/**
- * @brief Load a world file. Call once, before adv_start().
- * @param path Path to the world file.
- * @return 0 on success, -1 on error (a message is printed to stderr).
- */
-int adv_load(const char *path);
+namespace adv
+{
 
-/** @brief Print the title, the intro and the starting room. */
-void adv_start(void);
+/** @brief Thrown by Game::load() when a world file can't be read or is invalid. */
+class LoadError : public std::runtime_error
+{
+  public:
+    using std::runtime_error::runtime_error;
+};
 
-/**
- * @brief Execute one line of player input.
- * @param line The command as typed, without the trailing newline.
- */
-void adv_turn(const char *line);
+/** @brief One game: a loaded world plus the player's progress in it. */
+class Game
+{
+  public:
+    /** @param out Stream that receives all game text. Must outlive the game. */
+    explicit Game(std::ostream &out);
+    ~Game();
+    Game(const Game &) = delete;
+    Game &operator=(const Game &) = delete;
+    Game(Game &&) noexcept;
+    Game &operator=(Game &&) noexcept;
 
-/** @return Non-zero once the game has ended (won, died or quit). */
-int adv_is_over(void);
+    /**
+     * @brief Load a world file, replacing any previously loaded world.
+     * @throws LoadError with "file:line: message" if the file is invalid.
+     *         The game is left unchanged in that case.
+     */
+    void load(const std::filesystem::path &path);
 
-#ifdef __cplusplus
-}
-#endif
+    /** @brief Print the title, the intro and the starting room. */
+    void start();
 
-#endif /* ADVENGINE_ADVENGINE_H */
+    /**
+     * @brief Execute one line of player input.
+     * @param line The command as typed, without the trailing newline.
+     */
+    void turn(std::string_view line);
+
+    /** @return true once the game has ended (won, died or quit). */
+    [[nodiscard]] bool is_over() const;
+
+  private:
+    struct Impl;
+    std::unique_ptr<Impl> impl_;
+};
+
+} // namespace adv
+
+#endif // ADVENGINE_ADVENGINE_H

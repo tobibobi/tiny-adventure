@@ -3,14 +3,14 @@ cmake_minimum_required(VERSION 3.16)
 project(tinyadv
     VERSION 0.1.0
     DESCRIPTION "A tiny, data-driven text adventure engine"
-    LANGUAGES C)
+    LANGUAGES CXX)
 
 # --------------------------------------------------------------------------
 # Global settings
 # --------------------------------------------------------------------------
-set(CMAKE_C_STANDARD 99)
-set(CMAKE_C_STANDARD_REQUIRED ON)
-set(CMAKE_C_EXTENSIONS OFF)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -29,9 +29,9 @@ include(CTest)
 
 # Shared compiler settings, linked by every target in the project.
 add_library(project_options INTERFACE)
-if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(project_options INTERFACE
-        -Wall -Wextra -pedantic -Wshadow -Wstrict-prototypes -Wmissing-prototypes
+        -Wall -Wextra -pedantic -Wshadow -Wmissing-declarations -Wold-style-cast -Wnon-virtual-dtor
         $<$<BOOL:${TINYADV_WARNINGS_AS_ERRORS}>:-Werror>)
     if(TINYADV_SANITIZE)
         target_compile_options(project_options INTERFACE
@@ -56,7 +56,6 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_PROJECT_NUMBER ${PROJECT_VERSION})
     set(DOXYGEN_PROJECT_BRIEF "${PROJECT_DESCRIPTION}")
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ${CMAKE_SOURCE_DIR}/README.MD)
-    set(DOXYGEN_OPTIMIZE_OUTPUT_FOR_C YES)
     set(DOXYGEN_EXTRACT_ALL YES)
     set(DOXYGEN_EXTRACT_STATIC YES)
     set(DOXYGEN_RECURSIVE YES)

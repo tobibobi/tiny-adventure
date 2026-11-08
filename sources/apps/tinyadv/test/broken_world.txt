@@ -1,0 +1,3 @@
+# Deliberately broken world: the exit below leads to a room that doesn't exist.
+ROOM start
+EXIT north nowhere_land
