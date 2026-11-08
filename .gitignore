@@ -1,0 +1,10 @@
+# Build output (created and removed by the GNUmakefile)
+/build/
+
+# Editor / tooling leftovers
+.cache/
+compile_commands.json
+*.swp
+*~
+.vscode/
+.idea/

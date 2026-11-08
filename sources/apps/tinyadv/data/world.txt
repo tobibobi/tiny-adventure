@@ -1,0 +1,265 @@
+# ====================================================================
+#  THE SUNKEN SHRINE - sample world for tinyadv
+#
+#  The file format is described in docs/world-format.md.
+# ====================================================================
+
+TITLE THE SUNKEN SHRINE
+INTRO Somewhere beneath these hills lies a forgotten shrine and its silver
+INTRO idol. Find it, and bring it back to the old shed. (Type HELP for help.)
+START road
+MAXSCORE 5
+
+SYN drop put place lay
+SYN examine search read
+SYN light ignite
+SYN extinguish douse
+SYN unlock
+
+# --------------------------------------------------------------- rooms
+
+ROOM road
+NAME End of the Road
+DESC The cracked road ends here in a turning circle overgrown with weeds.
+DESC A weathered wooden shed stands to the east, and a narrow path winds
+DESC north into the woods. Set into the ground at your feet is a heavy
+DESC iron grate.
+EXIT east shed
+EXIT in shed
+EXIT north woods
+EXIT down chamber IF grate_open ELSE The iron grate is locked shut.
+
+ROOM shed
+NAME Inside the Shed
+DESC Dusty shelves line the walls of this cramped shed. Daylight leaks
+DESC through the gaps between the boards. The way out is west.
+EXIT west road
+EXIT out road
+
+ROOM woods
+NAME Forest Path
+DESC Tall pines crowd the path, their needles muffling every sound. A
+DESC thick drift of dead leaves has piled up against a fallen log. The
+DESC path leads back south.
+EXIT south road
+
+ROOM chamber
+NAME Damp Chamber
+DARK
+DESC Water drips from the ceiling of this low stone chamber. A rusty
+DESC ladder climbs up to the grate above, and a passage leads east.
+EXIT up road
+EXIT east chasm
+
+ROOM chasm
+NAME Edge of the Chasm
+DARK
+DESC The passage ends at the lip of a deep chasm. Cold air rises from
+DESC below. On the far side, a couple of metres away, the passage
+DESC continues east. Behind you, it leads back west.
+EXIT west chamber
+EXIT east shrine IF bridged ELSE The chasm is far too wide to jump.
+
+ROOM shrine
+NAME The Sunken Shrine
+DARK
+DESC Carved pillars ring a small circular chamber. In the middle stands a
+DESC stone altar, worn smooth by time. The only way out is back west.
+EXIT west chasm
+
+# ------------------------------------------------------------- objects
+
+OBJECT grate
+NAME an iron grate
+WORDS grate iron
+DESC A heavy iron grate with a keyhole crusted in rust.
+AT road
+
+OBJECT shelves
+NAME some shelves
+WORDS shelves shelf
+DESC Nothing on them but dust and a few dead spiders.
+AT shed
+
+OBJECT lamp
+NAME a brass lamp
+WORDS lamp lantern brass
+DESC An old brass oil lamp. It still sloshes when you shake it.
+AT shed
+TAKE
+LIGHTIF lamp_on
+
+OBJECT plank
+NAME a long wooden plank
+WORDS plank board wooden
+DESC A sturdy plank, about three metres long.
+AT shed
+TAKE
+
+OBJECT leaves
+NAME a drift of leaves
+WORDS leaves leaf drift log
+DESC A soggy heap of dead leaves.
+AT woods
+
+OBJECT key
+NAME a small key
+WORDS key small
+DESC A small key, spotted with rust.
+TAKE
+
+OBJECT chasm
+NAME a chasm
+WORDS chasm
+DESC You can't see the bottom. You'd rather not find out the hard way.
+AT chasm
+
+OBJECT bridge
+NAME a plank bridge
+WORDS bridge plank
+DESC Your plank, wedged across the chasm. It looks just about safe.
+
+OBJECT altar
+NAME a stone altar
+WORDS altar stone
+DESC Faint carvings of eyes cover every side of the altar.
+AT shrine
+
+OBJECT idol
+NAME a silver idol
+WORDS idol silver statue
+DESC A small silver figure with a smug expression.
+AT shrine
+TAKE
+
+# --------------------------------------------------------------- rules
+
+# Puzzle 1: find the key
+RULE examine
+OBJ leaves
+NOT found_key
+SAY You kick through the leaves. Something glints underneath: a small key!
+MOVE key woods
+SET found_key
+SCORE 1
+
+# Puzzle 2: unlock the grate
+RULE unlock
+OBJ grate
+FLAG grate_open
+SAY It's already unlocked.
+
+RULE unlock
+OBJ grate
+HAVE key
+SAY The key turns with a gritty scrape and the grate swings open,
+SAY revealing a rusty ladder leading down into darkness.
+SET grate_open
+SCORE 1
+
+RULE unlock
+OBJ grate
+SAY You'll need a key for that.
+
+RULE open
+OBJ grate
+FLAG grate_open
+SAY It's already open.
+
+RULE open
+OBJ grate
+HAVE key
+SAY You try the small key. It turns with a gritty scrape and the grate swings open,
+SAY revealing a rusty ladder leading down into darkness.
+SET grate_open
+SCORE 1
+
+RULE open
+OBJ grate
+SAY It's locked.
+
+# The lamp
+RULE light
+OBJ lamp
+FLAG lamp_on
+SAY It's already lit.
+
+RULE light
+OBJ lamp
+HAVE lamp
+SAY The lamp flickers on, casting a warm yellow glow.
+SET lamp_on
+
+RULE light
+OBJ lamp
+SAY You'll need to pick it up first.
+
+RULE extinguish
+OBJ lamp
+FLAG lamp_on
+SAY The lamp goes out.
+CLEAR lamp_on
+
+RULE examine
+OBJ lamp
+FLAG lamp_on
+SAY The lamp is burning steadily.
+
+# Puzzle 3: bridge the chasm
+RULE drop
+OBJ plank
+IN chasm
+HAVE plank
+SAY You lay the plank across the chasm. It reaches the other side with
+SAY a few centimetres to spare.
+MOVE plank nowhere
+MOVE bridge chasm
+SET bridged
+SCORE 1
+
+RULE use
+OBJ plank
+IN chasm
+HAVE plank
+SAY You lay the plank across the chasm. It reaches the other side with
+SAY a few centimetres to spare.
+MOVE plank nowhere
+MOVE bridge chasm
+SET bridged
+SCORE 1
+
+RULE take
+OBJ bridge
+SAY You'd rather not remove the only way back.
+
+RULE jump
+IN chasm
+SAY You leap bravely, and fall a very long way.
+DIE
+
+# The idol
+RULE take
+OBJ idol
+NOT took_idol
+SAY You lift the idol from the altar. It is heavier than it looks, and for
+SAY a moment the carved eyes seem to follow you.
+MOVE idol carried
+SET took_idol
+
+# Winning: return the idol to the shed
+RULE drop
+OBJ idol
+IN shed
+HAVE idol
+SAY You set the silver idol on a dusty shelf. Its smug little face
+SAY catches the daylight. The shrine's treasure is yours.
+MOVE idol shed
+SCORE 2
+WIN
+
+# A small nod to the classics
+RULE xyzzy
+SAY Nothing happens. Wrong cave.
+
+RULE plugh
+SAY Nothing happens. Still the wrong cave.

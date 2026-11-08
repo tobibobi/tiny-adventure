@@ -1,0 +1,20 @@
+n
+search leaves
+take key
+s
+e
+take lamp
+get plank
+w
+unlock grate with key
+d
+light lamp
+e
+put plank across chasm
+e
+take idol
+w
+w
+u
+e
+put idol on shelf

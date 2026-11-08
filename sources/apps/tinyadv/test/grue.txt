@@ -1,0 +1,8 @@
+n
+x leaves
+get key
+s
+unlock grate
+d
+e
+w
