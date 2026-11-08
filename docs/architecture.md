@@ -2,7 +2,7 @@
 
 > **Status:** this describes the current engine, a C++20 port of the version 1
 > text engine. Its architecture is not decided for version 2; see
-> [v2-rules.md](v2-rules.md).
+> [design/rules.md](../design/rules.md) on the `design` branch.
 
 ## Components
 

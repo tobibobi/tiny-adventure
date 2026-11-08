@@ -10,7 +10,7 @@ is plain ASCII, word-wrapped for 80-column terminals.
 
 **Status: in transition, architecture undecided.** Version 2 is planned as a point-and-click
 adventure with tabletop RPG rules. The game mechanics are being settled first in
-`docs/v2-rules.md`; the code shape follows from them. The current engine is a straight C++20 port of
+`design/rules.md` (on the `design` branch); the code shape follows from them. The current engine is a straight C++20 port of
 the version 1 text engine (the C99 original lives on the `v1` branch), kept as a checkpoint. Many of
 its v1 decisions (text parser, LLM fallback hook, text output, darkness/grue, compass exits,
 line-based world format) are expected to change. Don't build new features on it until the v2
